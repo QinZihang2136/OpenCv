@@ -1,0 +1,73 @@
+#include<opencv2/opencv.hpp>
+#include<opencv2/xfeatures2d.hpp>
+#include<iostream>
+
+using namespace cv;
+using namespace std ;
+using namespace cv::xfeatures2d;
+Mat src,gray,dst,frame,prev_frame,pre_gray;
+vector<Point2f> features;// shi-tomasi corner detection - features date
+
+vector<Point2f> iniPoints; //initialize the date features
+
+vector<Point2f> fpts[2];// save current frame and previous frame
+void klTrack();
+void detecFeatures(Mat &inFrame,Mat &ingray);
+void drawFeature(Mat &inFrame);
+int main(int argc, char *argv[])
+{
+
+    VideoCapture cap(0);
+    while (1)
+    {
+        cap >> frame;
+        cvtColor(frame,gray,COLOR_BGR2GRAY);
+        if(fpts[0].size() < 40)
+        {
+            detecFeatures(frame,gray);
+        }
+        detecFeatures(frame,gray);
+        drawFeature(frame);
+        if(pre_gray.empty())
+        {
+            gray.copyTo(pre_gray);
+            fpts[0].insert(fpts[0].end,features.begin(),features.end());
+            iniPoints.insert(iniPoints.end(),features.begin(),)
+        }
+        klTrack();
+        drawFeature(frame);
+        //update previous frames's date
+        gray.copyTo(pre_gray);
+        frame.copyTo(prev_frame);
+        
+        imshow("INPUT",frame);
+        waitKey(1);
+
+    }
+    src =imread("/home/qinzihang/OpenCV_Picture/1.jpg");
+    imshow("GG",src);
+
+    waitKey(0);
+}
+
+void detecFeatures(Mat &inFrame,Mat &ingray)
+{
+    double maxCorners = 5000;
+    double qualitylevel = 0.01;
+    double minDistance = 10;
+    double blockSize = 3;
+    double k =0.04;
+    goodFeaturesToTrack(ingray, features, maxCorners,qualitylevel,minDistance,Mat(),blockSize,false,k);
+
+}
+
+void drawFeature(Mat &inFrame)
+{
+    for (size_t t = 0; t < features.size(); t++)
+    {
+        circle(inFrame,features[t],2,Scalar(0,0,255),2,0);
+
+    }
+}
+void klTrack();
+
